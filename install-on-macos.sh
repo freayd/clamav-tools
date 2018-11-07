@@ -41,3 +41,27 @@ sudo chown -R clamav:clamav "$RUN_FOLDER"
 sudo chown clamav:clamav "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
 sudo chmod 0644 "$CLAMD_CONFIG_FILE" "$FRESHCLAM_CONFIG_FILE"
 sudo chmod 0644 "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
+
+DAEMON_FILE=/Library/LaunchDaemons/clamd.plist
+sudo tee "$DAEMON_FILE" << EOF > /dev/null
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>clamd</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/sbin/clamd</string>
+        <string>--foreground</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>${LOG_FOLDER}/clamd.plist.error.log</string>
+</dict>
+</plist>
+EOF
+sudo chown root:wheel "$DAEMON_FILE"
+sudo chmod 0644 "$DAEMON_FILE"
+sudo launchctl load "$DAEMON_FILE"
