@@ -8,6 +8,7 @@ RUN_FOLDER=/usr/local/var/run/clamav
 LOG_FOLDER=/usr/local/var/log
 CLAMD_LOG_FILE=$LOG_FOLDER/clamd.log
 FRESHCLAM_LOG_FILE=$LOG_FOLDER/freshclam.log
+CLAMD_ERROR_LOG_FILE=$LOG_FOLDER/clamd.error.log
 
 ( brew list --versions clamav > /dev/null ) || brew install clamav || exit
 
@@ -42,14 +43,16 @@ sudo chown clamav:clamav "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
 sudo chmod 0644 "$CLAMD_CONFIG_FILE" "$FRESHCLAM_CONFIG_FILE"
 sudo chmod 0644 "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
 
-DAEMON_FILE=/Library/LaunchDaemons/clamd.plist
-sudo tee "$DAEMON_FILE" << EOF > /dev/null
+DAEMON_FOLDER=/Library/LaunchDaemons
+CLAMD_DAEMON_NAME=clamav.clamd
+CLAMD_DAEMON_FILE=$DAEMON_FOLDER/$CLAMD_DAEMON_NAME.plist
+sudo tee "$CLAMD_DAEMON_FILE" << EOF > /dev/null
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>clamd</string>
+    <string>${CLAMD_DAEMON_NAME}</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/sbin/clamd</string>
@@ -58,10 +61,10 @@ sudo tee "$DAEMON_FILE" << EOF > /dev/null
     <key>KeepAlive</key>
     <true/>
     <key>StandardErrorPath</key>
-    <string>${LOG_FOLDER}/clamd.plist.error.log</string>
+    <string>${CLAMD_ERROR_LOG_FILE}</string>
 </dict>
 </plist>
 EOF
-sudo chown root:wheel "$DAEMON_FILE"
-sudo chmod 0644 "$DAEMON_FILE"
-sudo launchctl load "$DAEMON_FILE"
+sudo chown root:wheel "$CLAMD_DAEMON_FILE"
+sudo chmod 0644 "$CLAMD_DAEMON_FILE"
+sudo launchctl load "$CLAMD_DAEMON_FILE"
