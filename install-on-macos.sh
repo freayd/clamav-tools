@@ -36,13 +36,15 @@ FRESHCLAM_ERROR_LOG_FILE=$LOG_FOLDER/freshclam.error.log
 sudo mkdir -p "$DB_FOLDER"
 sudo mkdir -p "$RUN_FOLDER"
 [ -e "$CLAMD_LOG_FILE" ] || sudo touch "$CLAMD_LOG_FILE"
+[ -e "$CLAMD_ERROR_LOG_FILE" ] || sudo touch "$CLAMD_ERROR_LOG_FILE"
 [ -e "$FRESHCLAM_LOG_FILE" ] || sudo touch "$FRESHCLAM_LOG_FILE"
+[ -e "$FRESHCLAM_ERROR_LOG_FILE" ] || sudo touch "$FRESHCLAM_ERROR_LOG_FILE"
 sudo chown -R root:wheel "$CONFIG_FOLDER"
 sudo chown -R clamav:clamav "$DB_FOLDER"
 sudo chown -R clamav:clamav "$RUN_FOLDER"
-sudo chown clamav:clamav "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
+sudo chown clamav:clamav "$CLAMD_LOG_FILE" "$CLAMD_ERROR_LOG_FILE" "$FRESHCLAM_LOG_FILE" "$FRESHCLAM_ERROR_LOG_FILE"
 sudo chmod 0644 "$CLAMD_CONFIG_FILE" "$FRESHCLAM_CONFIG_FILE"
-sudo chmod 0644 "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
+sudo chmod 0644 "$CLAMD_LOG_FILE" "$CLAMD_ERROR_LOG_FILE" "$FRESHCLAM_LOG_FILE" "$FRESHCLAM_ERROR_LOG_FILE"
 
 DAEMON_FOLDER=/Library/LaunchDaemons
 CLAMD_DAEMON_NAME=clamav.clamd
