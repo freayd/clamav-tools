@@ -7,8 +7,8 @@ DB_FOLDER=/usr/local/var/lib/clamav
 RUN_FOLDER=/usr/local/var/run/clamav
 LOG_FOLDER=/usr/local/var/log
 CLAMD_LOG_FILE=$LOG_FOLDER/clamd.log
-FRESHCLAM_LOG_FILE=$LOG_FOLDER/freshclam.log
 CLAMD_ERROR_LOG_FILE=$LOG_FOLDER/clamd.error.log
+FRESHCLAM_LOG_FILE=$LOG_FOLDER/freshclam.log
 FRESHCLAM_ERROR_LOG_FILE=$LOG_FOLDER/freshclam.error.log
 
 ( brew list --versions clamav > /dev/null ) || brew install clamav || exit
