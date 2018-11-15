@@ -9,6 +9,7 @@ LOG_FOLDER=/usr/local/var/log
 CLAMD_LOG_FILE=$LOG_FOLDER/clamd.log
 FRESHCLAM_LOG_FILE=$LOG_FOLDER/freshclam.log
 CLAMD_ERROR_LOG_FILE=$LOG_FOLDER/clamd.error.log
+FRESHCLAM_ERROR_LOG_FILE=$LOG_FOLDER/freshclam.error.log
 
 ( brew list --versions clamav > /dev/null ) || brew install clamav || exit
 
@@ -46,6 +47,8 @@ sudo chmod 0644 "$CLAMD_LOG_FILE" "$FRESHCLAM_LOG_FILE"
 DAEMON_FOLDER=/Library/LaunchDaemons
 CLAMD_DAEMON_NAME=clamav.clamd
 CLAMD_DAEMON_FILE=$DAEMON_FOLDER/$CLAMD_DAEMON_NAME.plist
+FRESHCLAM_DAEMON_NAME=clamav.freshclam
+FRESHCLAM_DAEMON_FILE=$DAEMON_FOLDER/$FRESHCLAM_DAEMON_NAME.plist
 sudo tee "$CLAMD_DAEMON_FILE" << EOF > /dev/null
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -65,6 +68,26 @@ sudo tee "$CLAMD_DAEMON_FILE" << EOF > /dev/null
 </dict>
 </plist>
 EOF
-sudo chown root:wheel "$CLAMD_DAEMON_FILE"
-sudo chmod 0644 "$CLAMD_DAEMON_FILE"
-sudo launchctl load "$CLAMD_DAEMON_FILE"
+sudo tee "$FRESHCLAM_DAEMON_FILE" << EOF > /dev/null
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>${FRESHCLAM_DAEMON_NAME}</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/freshclam</string>
+        <string>--daemon</string>
+        <string>--foreground</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardErrorPath</key>
+    <string>${FRESHCLAM_ERROR_LOG_FILE}</string>
+</dict>
+</plist>
+EOF
+sudo chown root:wheel "$CLAMD_DAEMON_FILE" "$FRESHCLAM_DAEMON_FILE"
+sudo chmod 0644 "$CLAMD_DAEMON_FILE" "$FRESHCLAM_DAEMON_FILE"
+sudo launchctl load "$CLAMD_DAEMON_FILE" "$FRESHCLAM_DAEMON_FILE"
