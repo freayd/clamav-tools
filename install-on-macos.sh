@@ -51,6 +51,7 @@ CLAMD_DAEMON_NAME=clamav.clamd
 CLAMD_DAEMON_FILE=$DAEMON_FOLDER/$CLAMD_DAEMON_NAME.plist
 FRESHCLAM_DAEMON_NAME=clamav.freshclam
 FRESHCLAM_DAEMON_FILE=$DAEMON_FOLDER/$FRESHCLAM_DAEMON_NAME.plist
+[ -d "$DAEMON_FOLDER" ] || sudo mkdir "$DAEMON_FOLDER"
 sudo tee "$CLAMD_DAEMON_FILE" << EOF > /dev/null
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
